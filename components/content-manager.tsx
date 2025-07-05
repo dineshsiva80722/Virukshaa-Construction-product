@@ -2,6 +2,8 @@ import type { User } from "../types/user"
 import { DashboardSection } from "./sections/dashboard-section"
 import { AnalyticsSection } from "./sections/analytics-section"
 import { TasksSection } from "./sections/tasks-section"
+import { TeamSection } from "./sections/team-section"
+import { ProjectsSection } from "./sections/projects-section"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface ContentManagerProps {
@@ -19,11 +21,13 @@ function GenericSection({ title, description }: { title: string; description: st
 
       <Card>
         <CardHeader>
-          <CardTitle>Coming Soon</CardTitle>
-          <CardDescription>This section is under development</CardDescription>
+          <CardTitle>API Integration Available</CardTitle>
+          <CardDescription>This section will use API data when implemented</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">We're working hard to bring you this feature. Stay tuned for updates!</p>
+          <p className="text-muted-foreground">
+            This section is ready for API integration. The data structure and loading states are prepared.
+          </p>
         </CardContent>
       </Card>
     </div>
@@ -40,19 +44,23 @@ export function ContentManager({ user, activeSection }: ContentManagerProps) {
       case "tasks":
         return <TasksSection user={user} />
       case "team":
-        return <GenericSection title="Team Management" description="Manage your team members and collaboration" />
+        return <TeamSection user={user} />
       case "projects":
-        return <GenericSection title="Projects" description="Track and manage your projects" />
+        return <ProjectsSection user={user} />
       case "inventory":
-        return <GenericSection title="Inventory Management" description="Monitor stock levels and supplies" />
+        return (
+          <GenericSection title="Inventory Management" description="Monitor stock levels and supplies (API Ready)" />
+        )
       case "orders":
-        return <GenericSection title="Order Management" description="Process and track orders" />
+        return <GenericSection title="Order Management" description="Process and track orders (API Ready)" />
+      case "invoices":
+        return <GenericSection title="Invoice Management" description="Manage invoices and payments (API Ready)" />
       case "users":
-        return <GenericSection title="User Management" description="Manage system users and permissions" />
+        return <GenericSection title="User Management" description="Manage system users and permissions (API Ready)" />
       case "security":
-        return <GenericSection title="Security Center" description="Monitor system security and access" />
+        return <GenericSection title="Security Center" description="Monitor system security and access (API Ready)" />
       case "settings":
-        return <GenericSection title="Settings" description="Configure system preferences" />
+        return <GenericSection title="Settings" description="Configure system preferences (API Ready)" />
       default:
         return <DashboardSection user={user} />
     }

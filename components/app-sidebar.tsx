@@ -41,12 +41,12 @@ export function AppSidebar({ user, activeSection, onSectionChange, onLogout, ...
     <Sidebar collapsible="none" className="border-r bg-white text-slate-900" {...props}>
       <SidebarHeader className="border-b border-slate-200 p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
             <span className="text-sm font-bold text-white">D</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">BuildTrack</span>
-          
+            <span className="text-sm font-semibold">Dashboard</span>
+            <span className="text-xs text-slate-500">v2.0</span>
           </div>
         </div>
       </SidebarHeader>

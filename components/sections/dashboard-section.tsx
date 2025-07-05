@@ -1,76 +1,87 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { RefreshCw, AlertCircle } from "lucide-react"
 import type { User } from "../../types/user"
+import type { DashboardData } from "../../types/api"
+import { useSectionData } from "../../hooks/use-section-data"
 
 interface DashboardSectionProps {
   user: User
 }
 
 export function DashboardSection({ user }: DashboardSectionProps) {
-  const getDashboardData = () => {
-    switch (user.role) {
-      case "super-admin":
-        return {
-          title: "System Overview",
-          stats: [
-            { label: "Total Users", value: "1,234", change: "+12%", trend: "up" },
-            { label: "Active Sessions", value: "89", change: "+5%", trend: "up" },
-            { label: "System Health", value: "99.9%", change: "0%", trend: "stable" },
-            { label: "Security Alerts", value: "3", change: "-2", trend: "down" },
-          ],
-        }
-      case "supervisor":
-        return {
-          title: "Team Performance",
-          stats: [
-            { label: "Team Members", value: "12", change: "+1", trend: "up" },
-            { label: "Active Projects", value: "8", change: "+2", trend: "up" },
-            { label: "Completed Tasks", value: "156", change: "+23", trend: "up" },
-            { label: "Pending Reviews", value: "7", change: "-3", trend: "down" },
-          ],
-        }
-      case "supplier":
-        return {
-          title: "Supply Chain Status",
-          stats: [
-            { label: "Active Orders", value: "24", change: "+6", trend: "up" },
-            { label: "Inventory Items", value: "156", change: "-12", trend: "down" },
-            { label: "Deliveries Today", value: "8", change: "+3", trend: "up" },
-            { label: "Revenue (Month)", value: "$45,231", change: "+18%", trend: "up" },
-          ],
-        }
-      case "client":
-        return {
-          title: "Account Overview",
-          stats: [
-            { label: "Active Orders", value: "3", change: "+1", trend: "up" },
-            { label: "Pending Invoices", value: "2", change: "0", trend: "stable" },
-            { label: "Total Spent", value: "$12,450", change: "+$2,100", trend: "up" },
-            { label: "Support Tickets", value: "1", change: "-2", trend: "down" },
-          ],
-        }
-      default:
-        return {
-          title: "My Workspace",
-          stats: [
-            { label: "Tasks Today", value: "6", change: "+2", trend: "up" },
-            { label: "Hours Logged", value: "6.5", change: "+0.5", trend: "up" },
-            { label: "Meetings", value: "2", change: "0", trend: "stable" },
-            { label: "Messages", value: "3", change: "+1", trend: "up" },
-          ],
-        }
-    }
+  const { data, loading, error, refreshData } = useSectionData<DashboardData>("dashboard", user)
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground">Loading your personalized data...</p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 bg-gray-200 rounded animate-pulse mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
   }
 
-  const data = getDashboardData()
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground">Error loading dashboard data</p>
+          </div>
+          <Button onClick={refreshData} variant="outline">
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Retry
+          </Button>
+        </div>
+
+        <Card>
+          <CardContent className="flex items-center gap-2 p-6">
+            <AlertCircle className="h-5 w-5 text-red-500" />
+            <span className="text-red-600">{error}</span>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (!data) return null
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{data.title}</h1>
-        <p className="text-muted-foreground">Welcome back, {user.name}. Here's what's happening today.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back, {user.name}. Here's what's happening today.</p>
+        </div>
+        <Button onClick={refreshData} variant="outline" size="sm">
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Refresh
+        </Button>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data.stats.map((stat, index) => (
           <Card key={index}>
@@ -94,60 +105,62 @@ export function DashboardSection({ user }: DashboardSectionProps) {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
+        {/* Recent Activity */}
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your latest actions and updates</CardDescription>
+            <CardDescription>Your latest actions and updates from API</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Task completed</p>
-                  <p className="text-xs text-muted-foreground">2 minutes ago</p>
+              {data.recentActivity.map((activity) => (
+                <div key={activity.id} className="flex items-center space-x-4">
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      activity.status === "completed"
+                        ? "bg-green-500"
+                        : activity.status === "in-progress"
+                          ? "bg-blue-500"
+                          : "bg-yellow-500"
+                    }`}
+                  ></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{activity.description}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(activity.timestamp).toLocaleString()}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">New message received</p>
-                  <p className="text-xs text-muted-foreground">1 hour ago</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Meeting scheduled</p>
-                  <p className="text-xs text-muted-foreground">3 hours ago</p>
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
 
+        {/* Notifications */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Stats</CardTitle>
-            <CardDescription>Key metrics at a glance</CardDescription>
+            <CardTitle>Notifications</CardTitle>
+            <CardDescription>{data.notifications.count} new notifications from API</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Completion Rate</span>
-                <span className="text-sm font-medium">87%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: "87%" }}></div>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Efficiency</span>
-                <span className="text-sm font-medium">92%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: "92%" }}></div>
-              </div>
+              {data.notifications.items.map((notification) => (
+                <div key={notification.id} className="flex items-start space-x-3">
+                  <div
+                    className={`w-2 h-2 rounded-full mt-2 ${
+                      notification.type === "error"
+                        ? "bg-red-500"
+                        : notification.type === "warning"
+                          ? "bg-yellow-500"
+                          : notification.type === "success"
+                            ? "bg-green-500"
+                            : "bg-blue-500"
+                    }`}
+                  ></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{notification.title}</p>
+                    <p className="text-xs text-muted-foreground">{notification.message}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
