@@ -25,7 +25,6 @@ export default function Payroll() {
 
   const totalSalary = employees.reduce((sum, emp) => sum + emp.salary, 0);
   const totalPaid = employees.filter((e) => e.status === "Done").reduce((sum, e) => sum + e.salary, 0);
-
   const supervisors = Array.from(new Set(employees.map((e) => e.supervisor)));
 
   const handleStatusChange = (id: number, newStatus: "Pending" | "Done") => {
@@ -59,13 +58,13 @@ export default function Payroll() {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">Payroll Summary</h2>
+    <div className="px-4 sm:px-6 py-6 bg-gray-100 min-h-screen">
+      <h2 className="text-2xl font-bold mb-6">Payroll Summary</h2>
 
-      {/* Top Summary */}
+      {/* Summary Box */}
       <div className="bg-white rounded-lg shadow p-4 mb-6 border">
         <p className="text-lg font-semibold text-gray-700">Total Employee Salary</p>
-        <div className="flex justify-between mt-2">
+        <div className="flex flex-col sm:flex-row justify-between gap-2 mt-2 text-sm">
           <div>Total Salary: <span className="font-medium">₹{totalSalary.toLocaleString()}</span></div>
           <div>Paid: <span className="font-medium text-green-600">₹{totalPaid.toLocaleString()}</span></div>
           <div>Pending: <span className="font-medium text-red-600">₹{(totalSalary - totalPaid).toLocaleString()}</span></div>
@@ -80,52 +79,53 @@ export default function Payroll() {
           const team = employees.filter((e) => e.supervisor === supervisor);
           return (
             <div key={supervisor} className="mb-6">
-              <h3 className="font-semibold text-gray-800 mb-2">{supervisor}</h3>
-              <div className="space-y-2">
+              <h3 className="font-semibold text-gray-800 mb-3">{supervisor}</h3>
+              <div className="space-y-3">
                 {team.map((emp) => (
-                  <div key={emp.id} className="flex items-center justify-between border px-3 py-2 rounded">
+                  <div key={emp.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between border px-3 py-2 rounded gap-3">
                     {editingId === emp.id ? (
-                      <div className="w-full flex justify-between items-center gap-2">
+                      <div className="w-full flex flex-col sm:flex-row sm:items-center gap-2">
                         <div className="flex-1">
                           <input
                             value={editData.name || ""}
                             onChange={(e) => handleEditChange("name", e.target.value)}
-                            className="border p-1 rounded w-full text-sm mb-1"
+                            className="border p-2 rounded w-full text-sm mb-2 sm:mb-0"
+                            placeholder="Name"
                           />
                           <input
                             type="number"
                             value={editData.salary || ""}
                             onChange={(e) => handleEditChange("salary", parseInt(e.target.value))}
-                            className="border p-1 rounded w-full text-sm mb-1"
+                            className="border p-2 rounded w-full text-sm mb-2 sm:mb-0"
+                            placeholder="Salary"
                           />
                           <input
                             value={editData.supervisor || ""}
                             onChange={(e) => handleEditChange("supervisor", e.target.value)}
-                            className="border p-1 rounded w-full text-sm"
+                            className="border p-2 rounded w-full text-sm"
+                            placeholder="Supervisor"
                           />
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-2">
                           <button onClick={handleSave} className="text-green-600 hover:text-green-800">
-                            <Check size={16} />
+                            <Check size={18} />
                           </button>
                           <button onClick={handleCancel} className="text-gray-600 hover:text-gray-800">
-                            <X size={16} />
+                            <X size={18} />
                           </button>
                         </div>
                       </div>
                     ) : (
-                      <>
+                      <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <div>
                           <p className="font-medium">{emp.name}</p>
                           <p className="text-sm text-gray-600">Salary: ₹{emp.salary.toLocaleString()}</p>
                           <p className="text-xs text-gray-500">Supervisor: {emp.supervisor}</p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <select
                             value={emp.status}
-                            onChange={(e) =>
-                              handleStatusChange(emp.id, e.target.value as "Pending" | "Done")
-                            }
+                            onChange={(e) => handleStatusChange(emp.id, e.target.value as "Pending" | "Done")}
                             className={`p-1 rounded border text-xs ${
                               emp.status === "Done"
                                 ? "bg-green-100 text-green-700"
@@ -142,7 +142,7 @@ export default function Payroll() {
                             <Trash2 size={16} />
                           </button>
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 ))}

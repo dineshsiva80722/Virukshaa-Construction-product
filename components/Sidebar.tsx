@@ -54,10 +54,11 @@ export default function Sidebar() {
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <div
-        className={`$
-          sidebarOpen ? "block" : "hidden"
-        } md:block w-64 border-r bg-white flex flex-col justify-between z-10 fixed md:relative h-full`}
-      >
+  className={`${
+    sidebarOpen ? "block" : "hidden"
+  } md:block w-64 border-r bg-white flex flex-col justify-between z-10 fixed md:relative h-full`}
+>
+
         <div className="fixed">
           <div className="p-4 font-bold text-lg flex items-center gap-2 justify-between">
             <div className="flex items-center gap-2">
